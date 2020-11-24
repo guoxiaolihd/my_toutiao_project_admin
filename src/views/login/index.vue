@@ -40,8 +40,8 @@ export default {
   data () {
     return {
       user: {
-        mobile: '',
-        code: '',
+        mobile: '13911111111',
+        code: '246810',
         agree: false
       },
       // checked: false,
@@ -49,12 +49,12 @@ export default {
       formRules: { // 表单验证规则配置
         // 要验证的数据名称：规则列表[]
         mobile: [
-          { required: true, message: '请输入手机号', trigger: 'change' },
-          { pattern: /^1[3|5|7|8|9]\d{9}$/, message: '请输入正确的号码格式', trigger: 'change' }
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { pattern: /^1[3|5|7|8|9]\d{9}$/, message: '请输入正确的号码格式', trigger: 'blur' }
         ],
         code: [
-          { required: true, message: '验证码不能为空', trigger: 'change' },
-          { pattern: /^\d{6}$/, message: '请输入正确的验证码格式' }
+          { required: true, message: '验证码不能为空', trigger: 'blur' },
+          { pattern: /^\d{6}$/, message: '请输入正确的验证码格式', trigger: 'blur' }
         ],
         agree: [
           {
@@ -98,9 +98,8 @@ export default {
       login(this.user).then(res => {
         console.log(res)
         // 登录成功
-        this.$message({
-          message: '登录成功',
-          type: 'success'
+        this.$router.push({
+          name: 'home'
         })
         this.loginLoading = false
       }).catch(err => {
