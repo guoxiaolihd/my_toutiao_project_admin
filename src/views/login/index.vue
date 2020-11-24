@@ -9,11 +9,11 @@
       <div class="login-head">
         <div class="logo"></div>
       </div>
-      <el-form class="login-form" ref="form" :model="user">
-        <el-form-item>
+      <el-form class="login-form" ref="form" :model="user" :rules="formRules">
+        <el-form-item prop="mobile">
           <el-input v-model="user.mobile" placeholder="请输入手机号"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop="code">
           <el-input v-model="user.code" placeholder="请输入验证码"></el-input>
         </el-form-item>
         <el-form-item>
@@ -44,7 +44,19 @@ export default {
         code: ''
       },
       checked: false,
-      loginLoading: false
+      loginLoading: false,
+      formRules: { // 表单验证规则配置
+        // 要验证的数据名称：规则列表[]
+        mobile: [
+          { required: true, message: '请输入手机号', trigger: 'change' },
+          { pattern: /^1[3|5|7|8|9]\d{9}$/, message: '请输入正确的号码格式', trigger: 'change' }
+        ],
+        code: [
+          { required: true, message: '验证码不能为空', trigger: 'change' },
+          { pattern: /^\d{6}$/, message: '请输入正确的验证码格式' }
+        ]
+      }
+
     }
   },
   computed: {},
