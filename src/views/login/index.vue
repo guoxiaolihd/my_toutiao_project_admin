@@ -9,7 +9,7 @@
       <div class="login-head">
         <div class="logo"></div>
       </div>
-      <el-form class="login-form" ref="form" :model="user" :rules="formRules">
+      <el-form class="login-form" ref="login-form" :model="user" :rules="formRules">
         <el-form-item prop="mobile">
           <el-input v-model="user.mobile" placeholder="请输入手机号"></el-input>
         </el-form-item>
@@ -65,8 +65,17 @@ export default {
   mounted () {},
   methods: {
     onLogin () {
-      // 获取表单数据（根据接口要求绑定数据）
-      const user = this.user
+      let isPassed = true
+      this.$refs['login-form'].validate(valid => {
+        if (!valid) {
+          isPassed = false
+        }
+      })
+      if (isPassed) {
+        this.login()
+      }
+    },
+    login () {
       // 表单验证
       this.loginLoading = true
       // 验证通过，提交登录
@@ -74,7 +83,7 @@ export default {
         method: 'POST',
         url: '/mp/v1_0/authorizations',
         // data 用来设置 POST 请求体
-        data: user
+        data: this.user
       }).then(res => {
         console.log(res)
         // 登录成功
