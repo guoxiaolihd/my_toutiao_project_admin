@@ -10,6 +10,7 @@
     background-color="#545c64"
     text-color="#fff"
     active-text-color="#ffd04b"
+    :collapse="isCollapse"
   >
     <el-menu-item index="1">
       <i class="el-icon-setting"></i>
@@ -46,7 +47,7 @@
 export default {
   name: 'AppAside',
   components: {},
-  props: {},
+  props: ['is-collapse'],
   data () {
     return {}
   },
