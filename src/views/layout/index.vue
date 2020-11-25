@@ -7,7 +7,9 @@
       <app-aside />
     </el-aside>
     <el-container>
-      <el-header class="header">Header</el-header>
+      <el-header class="header">
+        <app-header />
+      </el-header>
       <el-main class="main">
         <!-- 子路由出口 -->
         <router-view />
@@ -18,10 +20,12 @@
 
 <script>
 import AppAside from './components/aside'
+import AppHeader from './components/header'
 export default {
   name: 'LayoutIndex',
   components: {
-    AppAside
+    AppAside,
+    AppHeader
   },
   props: {},
   data () {
