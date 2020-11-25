@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+// import "nprogress/nprogress.css"
 
 // 加载 element 组件库
 import ElementUI from 'element-ui'
