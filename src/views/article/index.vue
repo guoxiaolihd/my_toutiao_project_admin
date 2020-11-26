@@ -33,15 +33,22 @@
         </el-form-item>
         <el-form-item label="日期">
           <el-date-picker
-            v-model="form.date1"
+            v-model="rangeDate"
             type="datetimerange"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            :default-time="['12:00:00']">
+            :default-time="['12:00:00']"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            >
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button
+            type="primary"
+            :disabled="loading"
+            @click="loadArticles(1)"
+          >查询</el-button>
         </el-form-item>
       </el-form>
       <!-- /数据筛选表单 -->
@@ -127,7 +134,7 @@
 </template>
 
 <script>
-import { getArticles, getArticleChannels } from '@/api/article'
+import { getArticles, getArticleChannels, deleteArticle } from '@/api/article'
 export default {
   name: 'ArticleIndex',
   components: {},
@@ -148,7 +155,10 @@ export default {
       pageSize: 10,
       status: null,
       channels: [],
-      channelId: null
+      channelId: null,
+      rangeDate: null,
+      page: 1,
+      loading: true
 
     }
   },
@@ -161,11 +171,14 @@ export default {
   mounted () {},
   methods: {
     loadArticles (page = 1) {
+      this.loading = true
       getArticles({
         page,
         per_page: this.pageSize,
         status: this.status,
-        channel_id: this.channelId
+        channel_id: this.channelId,
+        begin_pubdate: this.rangeDate ? this.rangeDate[0] : null, // 开始日期
+        end_pubdate: this.rangeDate ? this.rangeDate[1] : null // 截止日期
       }).then(res => {
         this.loading = false
         const { results, total_count: totalCount } = res.data.data
@@ -179,6 +192,25 @@ export default {
     loadChannels () {
       getArticleChannels().then(res => {
         this.channels = res.data.data.channels
+      })
+    },
+    onDeleteArticle (articleId) {
+      console.log(articleId)
+      this.$confirm('确认删除吗？', '删除提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 确认执行这里
+        deleteArticle(articleId).then(res => {
+          console.log(res)
+          this.loadArticles(this.page)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     }
   }
