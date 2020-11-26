@@ -42,7 +42,22 @@
             fit="cover"
           ></el-image>
           <div class="image-action">
-            <i class="el-icon-star-on"></i>
+            <!-- <i class="el-icon-star-on"></i> -->
+            <!--
+              class 样式绑定
+               {
+                  CSS类名: 布尔值
+               }
+               true：作用类名
+               false：不作用类名
+             -->
+            <i
+              :class="{
+                'el-icon-star-on': img.is_collected,
+                'el-icon-star-off': !img.is_collected
+              }"
+              @click="onCollect(img)"
+            ></i>
             <i class="el-icon-delete-solid"></i>
           </div>
         </el-col>
@@ -83,7 +98,7 @@
 </template>
 
 <script>
-import { getImages } from '@/api/image'
+import { getImages, collectImage } from '@/api/image'
 export default {
   name: 'ImageIndex',
   components: {},
@@ -100,7 +115,7 @@ export default {
         Authorization: `Bearer ${user.token}`
       },
       totalCount: 0, // 总数据条数
-      pageSize: 5, // 每页大小
+      pageSize: 20, // 每页大小
       page: 1 // 当前页码
     }
   },
@@ -134,6 +149,11 @@ export default {
     },
     onPageChange (page) {
       this.loadImages(page)
+    },
+    onCollect (img) {
+      collectImage(img.id, !img.is_collected).then(res => {
+        img.is_collected = !img.is_collected
+      })
     }
   }
 }
