@@ -14,7 +14,7 @@
         <el-radio-group
          v-model="collect"
          size="mini"
-         @change="onCollectChange"
+         @change="loadImages(1)"
         >
           <el-radio-button :label="false">全部</el-radio-button>
           <el-radio-button :label="true">收藏</el-radio-button>
@@ -75,7 +75,8 @@
       background
       :total="totalCount"
       :page-size="pageSize"
-      @current-change="onCurrentChange">
+      :current-page.sync="page"
+      @current-change="onPageChange">
     </el-pagination>
     <!-- /列表分页 -->
   </div>
@@ -97,21 +98,27 @@ export default {
       uploadHeaders: {
         // 获取对应的token
         Authorization: `Bearer ${user.token}`
-      }
+      },
+      totalCount: 0, // 总数据条数
+      pageSize: 5, // 每页大小
+      page: 1 // 当前页码
     }
   },
   computed: {},
   watch: {},
   created () {
-    this.loadImages(false)
+    this.loadImages(1)
   },
   mounted () {},
   methods: {
-    loadImages (collect = false) {
-      getImages(
-        collect
-      ).then(res => {
+    loadImages (page = 1) {
+      getImages({
+        collect: this.collect,
+        page,
+        per_page: this.pageSize
+      }).then(res => {
         this.images = res.data.data.results
+        this.totalCount = res.data.data.total_count
       })
     },
     onCollectChange (value) {
@@ -119,8 +126,14 @@ export default {
     },
     onUploadSuccess () {
       this.dialogUploadVisible = false
-      // 上传功能重新加载图片
-      this.loadImages(false)
+      this.loadImages(this.page)
+      this.$message({
+        type: 'success',
+        message: '上传成功'
+      })
+    },
+    onPageChange (page) {
+      this.loadImages(page)
     }
   }
 }
