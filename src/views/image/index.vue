@@ -11,10 +11,19 @@
         <!-- <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button> -->
       </div>
       <div style="padding-bottom: 20px;">
-        <el-radio-group v-model="radio1" size="mini">
-          <el-radio-button label="全部"></el-radio-button>
-          <el-radio-button label="收藏"></el-radio-button>
+        <el-radio-group
+         v-model="collect"
+         size="mini"
+         @change="onCollectChange"
+        >
+          <el-radio-button :label="false">全部</el-radio-button>
+          <el-radio-button :label="true">收藏</el-radio-button>
         </el-radio-group>
+        <el-button
+          size="mini"
+          type="success"
+          @click="dialogUploadVisible = true"
+        >上传素材</el-button>
       </div>
       <!-- 素材列表 -->
       <el-row :gutter="10">
@@ -35,6 +44,26 @@
       </el-row>
       <!-- /素材列表 -->
     </el-card>
+    <el-dialog
+      title="上传素材"
+      :visible.sync="dialogUploadVisible"
+      :append-to-body="true"
+    >
+      <el-upload
+        class="upload-demo"
+        drag
+        action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
+        :headers="uploadHeaders"
+        name="image"
+        multiple
+        :show-file-list="false"
+        :on-success="onUploadSuccess"
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+      </el-upload>
+    </el-dialog>
   </div>
 </template>
 
@@ -45,25 +74,45 @@ export default {
   components: {},
   props: {},
   data () {
+    const user = JSON.parse(window.localStorage.getItem('user'))
     return {
-      radio1: '全部',
-      images: []
+      collect: false,
+      images: [],
+      dialogUploadVisible: false,
+      uploadHeaders: {
+        Authorization: `Bearer ${user.token}`
+      }
     }
   },
   computed: {},
   watch: {},
   created () {
-    this.loadImages()
+    this.loadImages(false)
   },
   mounted () {},
   methods: {
-    loadImages () {
-      getImages().then(res => {
+    loadImages (collect = false) {
+      getImages(
+        collect
+      ).then(res => {
         this.images = res.data.data.results
       })
+    },
+    onCollectChange (value) {
+      this.loadImages(value)
+    },
+    onUploadSuccess () {
+      this.dialogUploadVisible = false
+      this.loadImages(false)
     }
   }
 }
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.action-head {
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+</style>
