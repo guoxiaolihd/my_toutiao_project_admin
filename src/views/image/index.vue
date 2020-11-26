@@ -34,12 +34,17 @@
          :lg="4"
          v-for="(img, index) in images"
          :key="index"
+         class="image-item"
          >
           <el-image
             style="height: 100px"
             :src="img.url"
             fit="cover"
           ></el-image>
+          <div class="image-action">
+            <i class="el-icon-star-on"></i>
+            <i class="el-icon-delete-solid"></i>
+          </div>
         </el-col>
       </el-row>
       <!-- /素材列表 -->
@@ -64,6 +69,15 @@
         <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
       </el-upload>
     </el-dialog>
+    <!-- 列表分页 -->
+    <el-pagination
+      layout="prev, pager, next"
+      background
+      :total="totalCount"
+      :page-size="pageSize"
+      @current-change="onCurrentChange">
+    </el-pagination>
+    <!-- /列表分页 -->
   </div>
 </template>
 
@@ -78,8 +92,10 @@ export default {
     return {
       collect: false,
       images: [],
+      // dialogUploadVisible设置上图图片对话框是否可见  false默认为不可见
       dialogUploadVisible: false,
       uploadHeaders: {
+        // 获取对应的token
         Authorization: `Bearer ${user.token}`
       }
     }
@@ -103,6 +119,7 @@ export default {
     },
     onUploadSuccess () {
       this.dialogUploadVisible = false
+      // 上传功能重新加载图片
       this.loadImages(false)
     }
   }
@@ -114,5 +131,21 @@ export default {
   padding-bottom: 20px;
   display: flex;
   justify-content: space-between;
+}
+.image-item {
+  position: relative;
+}
+.image-action {
+  font-size: 25px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  color: #fff;
+  height: 40px;
+  background-color: rgba(204, 204, 204, .5);
+  position: absolute;
+  bottom: 4px;
+  left: 5px;
+  right: 5px;
 }
 </style>
